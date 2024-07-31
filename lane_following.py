@@ -29,7 +29,7 @@ class BLUEROV2LANEFOLLOWING(Node):
 
     def get_heading(self, image):
 
-        slopes = ld.return_slopes(image)  # This returns a list of slopes
+        slopes = ld.get_slopes_intercepts(image)  # This returns a list of slopes
         center_slope = max(abs(slope) for slope in slopes)
 
         return np.degrees(np.arctan(center_slope))  
@@ -38,8 +38,10 @@ class BLUEROV2LANEFOLLOWING(Node):
     def desired_heading_callback(self, image):
         # Calculating the desired with the other functions
 
+        image, lines = ld.detect_lines(image, 300, 350, 5, 100, 150)
+        slopes, intercepts = ld.get_slopes_intercepts(lines)
 
-        new_desired_heading = self.get_heading(self, ld.detect_lanes(image))
+        new_desired_heading = self.get_heading(slopes)
 
 
         # publish the desired heading for the PID
